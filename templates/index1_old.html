@@ -1,0 +1,195 @@
+<!doctype html>
+<html>
+
+<head>
+   <meta charset="utf-8">
+   <title>IT-Helper Домашняя страница</title>
+   <meta name="generator" content="WYSIWYG Web Builder 17 - https://www.wysiwygwebbuilder.com">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link href="{{ url_for('static', filename='favicon.ico') }}" rel="shortcut icon" type="image/x-icon">
+   <link href="{{ url_for('static', filename='images/logo1_small3.png') }}" rel="icon" sizes="519x515" type="image/png">
+   <link href="{{ url_for('static', filename='images/logo1_small3.png') }}" rel="icon" sizes="519x515" type="image/png">
+   <link href="{{ url_for('static', filename='base/jquery-ui.min.css') }}" rel="stylesheet">
+   <link href="{{ url_for('static', filename='font-awesome.min.css') }}" rel="stylesheet">
+   <link href="{{ url_for('static', filename='IT-Helper.css') }}" rel="stylesheet">
+   <link href="{{ url_for('static', filename='index.css') }}" rel="stylesheet">
+   <script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='util.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='collapse.min.js') }}"></script>
+
+   <script src="{{ url_for('static', filename='jquery-ui.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='listview.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='wb.filterable.min.js') }}"></script>
+   <!--Ниже мои скрипты-->
+   
+   <script>
+     window.difyChatbotConfig = {
+       token: 'A0YY0cIIr9wRmzLN',
+       baseUrl: 'http://192.168.2.50:9001'
+     }
+  </script>
+  <script
+     src="http://192.168.2.50:9001/embed.min.js"
+     id="yDy9mwG6JhMtD1fR"
+     defer>
+  </script>
+  <style>
+      #dify-chatbot-bubble-button {
+        background-color: #1C64F2 !important;
+      }
+      #dify-chatbot-bubble-window {
+        width: 50rem !important;
+        height: 40rem !important;
+      }
+  </style>
+      
+   <!--<script src="{{ url_for('static', filename='css_for_elements.js') }}"></script>-->
+   <script src="{{ url_for('static', filename='check-ip.js') }}"></script>
+   <script src="{{ url_for('static', filename='search-shops-new.js') }}"></script>
+   <script src="{{ url_for('static', filename='get_cities.js') }}"></script>
+   <script src="{{ url_for('static', filename='os_parameters.js') }}"></script>
+   <script>
+      $(document).ready(function () {
+         //   $("#wb_ResponsiveMenu1 ul li a").click(function (event) {
+         //      $("#wb_ResponsiveMenu1 input").prop("checked", false);
+         //   });
+         //   $("#Accordion1 .panel").on('show.bs.collapse', function () {
+         //      $(this).addClass('active');
+         //   });
+         //   $("#Accordion1 .panel").on('hide.bs.collapse', function () {
+         //      $(this).removeClass('active');
+         //   });
+         //   //$("#ListView1").listview(
+         //   //   {
+         //   //      inset: false
+         //   //   });
+         $("#ListView1").filterable({ input: '#ListView1-filter-input' });
+
+         $('#ButtonSend').on('click', function () {
+            var message = $('#EditboxSend').val();
+            var shop = $('#Dialog1').attr('shop');
+            var pc = $('#Dialog1').attr('pc');
+            if (message.trim() === '') {
+               alert('Пожалуйста введите сообщение');
+               return;
+            }
+
+            // Отправляем POST-запрос на сервер
+            $.ajax({
+               url: `/send_message/${shop}/${pc}`,
+               type: 'POST',
+               data: { message: message }, // Данные, которые будут отправлены на сервер
+               success: function (response) {
+                  // Обработка успешного ответа от сервера
+                  console.log('Сообщение отправлено:', response);
+                  $('#EditboxSend').val('');
+                  $('#Dialog1').dialog('close'); // Закрываем модальное окно
+               },
+               error: function (xhr, status, error) {
+                  // Обработка ошибки запроса
+                  console.error('Ошибка отправки сообщения:', error);
+               }
+            });
+         })
+
+      });
+   </script>
+
+</head>
+
+<body>
+   <div id="container">
+      <div id="Dialog1">
+         <input type="submit" id="ButtonSend" name="" value="Отправить"
+            style="position:absolute;left:158px;top:54px;width:96px;height:25px;z-index:43;">
+         <input type="text" id="EditboxSend"
+            style="position:absolute;left:9px;top:13px;width:387px;height:16px;z-index:44;" name="EditboxSend" value=""
+            spellcheck="false">
+      </div>
+   </div>
+   <div id="wb_LayoutGrid1">
+      <div id="LayoutGrid1">
+         <div class="col-1">
+            <a href="#" onclick="window.location.href='./';return false;"
+               onmousedown="if(event.button == 1) { window.location.href='https://raz0red.github.io/webprboom'; return false; }">
+               <picture id="wb_Picture1" style="display:block;width: 100%;height:44px;z-index:0">
+                  <img src="{{ url_for('static', filename='images/logo1_small3.png') }}" loading="lazy" id="Picture1"
+                     alt="" width="45" height="45" srcset="{{ url_for('static', filename='images/logo1_small3.png') }}">
+               </picture>
+            </a>
+         </div>
+         <div class="col-2">
+            <div id="wb_ResponsiveMenu1" style="display:inline-block;width:100%;z-index:1;">
+               <label class="toggle" for="ResponsiveMenu1-submenu" id="ResponsiveMenu1-title">Меню<span
+                     id="ResponsiveMenu1-icon"><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span></span></label>
+               <input type="checkbox" id="ResponsiveMenu1-submenu">
+               <ul class="ResponsiveMenu1" id="ResponsiveMenu1" role="menu">
+                  <li role="menuitem">
+                     <label for="ResponsiveMenu1-submenu-0" class="toggle"><i
+                           class="fa fa-cubes fa-2x">&nbsp;</i>Система<b class="arrow-down"></b></label>
+                     <a href="javascript:void(0)"><i class="fa fa-cubes fa-2x">&nbsp;</i><br>Система<b
+                           class="arrow-down"></b></a>
+                     <input type="checkbox" id="ResponsiveMenu1-submenu-0">
+                     <ul role="menu">
+                        <li role="menuitem"><a href="http://192.168.2.50:8080" target="_blank"><i
+                                 class="fa fa-television fa-2x">&nbsp;</i>Удаленное&nbsp;управление</a></li>
+                        <li role="menuitem"><a href="http://192.168.2.50/db-admin/" target="_blank"><i
+                                 class="fa fa-database fa-2x">&nbsp;</i>Редактор&nbsp;SQL</a></li>
+                     </ul>
+                  </li>
+                  <li role="menuitem">
+                     <label for="ResponsiveMenu1-submenu-1" class="toggle"><i
+                           class="fa fa-gears fa-2x">&nbsp;</i>Сервисы<b class="arrow-down"></b></label>
+                     <a href="javascript:void(0)"><i class="fa fa-gears fa-2x">&nbsp;</i><br>Сервисы<b
+                           class="arrow-down"></b></a>
+                     <input type="checkbox" id="ResponsiveMenu1-submenu-1">
+                     <ul role="menu">
+                        <li role="menuitem"><a href="" target="_blank"><i
+                                 class="fa fa-address-card-o fa-2x">&nbsp;</i>Пароли&nbsp;для&nbsp;касс</a></li>
+                     </ul>
+                  </li>
+                  <li role="menuitem"><a href=""><i class="fa fa-map-o fa-2x">&nbsp;</i><br>Карта</a></li>
+               </ul>
+
+            </div>
+         </div>
+         <div class="col-3">
+            <input type="text" id="Editbox1" style="display:block;width: 100%;height:26px;z-index:2;" name="Editbox1"
+               value="Поиск по магазину" spellcheck="false">
+         </div>
+      </div>
+   </div>
+   <div id="wb_LayoutGrid2">
+      <div id="LayoutGrid2">
+         <div class="row">
+            <!--Panel1 start-->
+            <div class="col-1">
+               <div id="wb_ListView1" style="display:inline-block;width:100%;z-index:11;">
+                  <form><input type="text" data-type="search" id="ListView1-filter-input"
+                        placeholder="Фильтр по городам...">
+                  </form>
+                  <ul id="ListView1" style="margin-top:0;margin-bottom:0;">
+
+                  </ul>
+               </div>
+            </div>
+            <div class="col-2">
+
+               <div id="wb_Accordion1" style="display:inline-block;width:100%;z-index:20;">
+                  <div id="Accordion1" class="panel-group" role="tablist">
+
+                  </div>
+
+               </div>
+            </div>
+            <!--Panel1-->
+
+         </div>
+      </div>
+
+   </div>
+   </div>
+
+</body>
+
+</html>

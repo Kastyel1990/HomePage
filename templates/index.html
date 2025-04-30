@@ -1,0 +1,298 @@
+<!doctype html>
+<html>
+
+<head>
+   <meta charset="utf-8">
+   <title>Безымянная страница</title>
+   <meta name="generator" content="WYSIWYG Web Builder 17 Trial Version - https://www.wysiwygwebbuilder.com">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link href="{{ url_for('static', filename='favicon.ico') }}" rel="shortcut icon" type="image/x-icon">
+   <link href="{{ url_for('static', filename='images/logo1_small3.png') }}" rel="icon" sizes="519x515" type="image/png">
+   <link href="{{ url_for('static', filename='images/logo1_small3.png') }}" rel="icon" sizes="519x515" type="image/png">
+   <link href="{{ url_for('static', filename='base/jquery-ui.min.css') }}" rel="stylesheet">
+   <link href="{{ url_for('static', filename='font-awesome.min.css') }}" rel="stylesheet">
+   <link href="{{ url_for('static', filename='IT-Helper.css') }}" rel="stylesheet">
+   <link href="{{ url_for('static', filename='index.css') }}" rel="stylesheet">
+   <script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='util.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='collapse.min.js') }}"></script>
+
+   <script src="{{ url_for('static', filename='jquery-ui.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='listview.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='wb.filterable.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='searchindex.js') }}"></script>
+   <script src="{{ url_for('static', filename='wb.sitesearch.min.js') }}"></script>
+   
+   <script>
+      var features = 'toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes,status=no,left=,top=,width=,height=';
+      function searchPage(features) {
+         var element = document.getElementById('SiteSearch1');
+         window.open('sitesearch1-results.html?q=' + encodeURIComponent(element.value), '', features);
+         return false;
+      }
+   </script>
+   <script>
+      $(document).ready(function () {
+         $("#wb_ResponsiveMenu1 ul li a").click(function (event) {
+            $("#wb_ResponsiveMenu1 input").prop("checked", false);
+         });
+         $("#Accordion1 .panel").on('show.bs.collapse', function () {
+            $(this).addClass('active');
+         });
+         $("#Accordion1 .panel").on('hide.bs.collapse', function () {
+            $(this).removeClass('active');
+         });
+         searchParseURL('SiteSearch1');
+         $("#ListView1").listview(
+            {
+               inset: false
+            });
+         $("#ListView1").filterable({ input: '#ListView1-filter-input' });
+      });
+   </script>
+</head>
+
+<body>
+   <div id="container">
+
+   </div>
+   <div id="wb_LayoutGrid1">
+      <div id="LayoutGrid1">
+         <div class="col-1">
+            <a href="#" onclick="window.location.href='./index.html';return false;"
+               onwheel="window.location.href='https://raz0red.github.io/webprboom';return false;">
+               <picture id="wb_Picture1" style="display:block;width: 100%;height:44px;z-index:0">
+                  <img src="images/logo1_small3.png" loading="lazy" id="Picture1" alt="" width="45" height="45"
+                     srcset="images/logo1_small3.png">
+               </picture>
+            </a>
+         </div>
+         <div class="col-2">
+            <div id="wb_ResponsiveMenu1" style="display:inline-block;width:100%;z-index:1;">
+               <label class="toggle" for="ResponsiveMenu1-submenu" id="ResponsiveMenu1-title">Menu<span
+                     id="ResponsiveMenu1-icon"><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span></span></label>
+               <input type="checkbox" id="ResponsiveMenu1-submenu">
+               <ul class="ResponsiveMenu1" id="ResponsiveMenu1" role="menu">
+                  <li role="menuitem">
+                     <label for="ResponsiveMenu1-submenu-0" class="toggle"><i
+                           class="fa fa-cubes fa-2x">&nbsp;</i>Система<b class="arrow-down"></b></label>
+                     <a href="javascript:void(0)"><i class="fa fa-cubes fa-2x">&nbsp;</i><br>Система<b
+                           class="arrow-down"></b></a>
+                     <input type="checkbox" id="ResponsiveMenu1-submenu-0">
+                     <ul role="menu">
+                        <li role="menuitem"><a href="http://192.168.2.50:8080"><i
+                                 class="fa fa-television fa-2x">&nbsp;</i>Удаленное&nbsp;управление</a></li>
+                        <li role="menuitem"><a href="http://192.168.2.50:8081"><i
+                                 class="fa fa-database fa-2x">&nbsp;</i>Редактор&nbsp;SQL</a></li>
+                     </ul>
+                  </li>
+                  <li role="menuitem">
+                     <label for="ResponsiveMenu1-submenu-1" class="toggle"><i
+                           class="fa fa-gears fa-2x">&nbsp;</i>Сервисы<b class="arrow-down"></b></label>
+                     <a href="javascript:void(0)"><i class="fa fa-gears fa-2x">&nbsp;</i><br>Сервисы<b
+                           class="arrow-down"></b></a>
+                     <input type="checkbox" id="ResponsiveMenu1-submenu-1">
+                     <ul role="menu">
+                        <li role="menuitem"><a href=""><i
+                                 class="fa fa-address-card-o fa-2x">&nbsp;</i>Пароли&nbsp;для&nbsp;касс</a></li>
+                     </ul>
+                  </li>
+                  <li role="menuitem"><a href=""><i class="fa fa-map-o fa-2x">&nbsp;</i><br>Карта</a></li>
+               </ul>
+
+            </div>
+         </div>
+         <div class="col-3">
+            <form name="SiteSearch1_form" id="SiteSearch1_form" role="search" accept-charset="UTF-8"
+               style="display:inline" onsubmit="return searchPage(features)">
+               <input type="text" id="SiteSearch1" style="display:block;width: 100%;height:26px;z-index:2;"
+                  name="SiteSearch1" value="" spellcheck="false" placeholder="Search this website" role="searchbox">
+            </form>
+         </div>
+      </div>
+   </div>
+   <div id="wb_LayoutGrid2">
+      <div id="LayoutGrid2">
+         <div class="row">
+            <div class="col-1">
+               <div id="wb_ListView1" style="display:inline-block;width:100%;z-index:11;">
+                  <form><input type="text" data-type="search" id="ListView1-filter-input" placeholder="Filter items...">
+                  </form>
+                  <ul id="ListView1" style="margin-top:0;margin-bottom:0;">
+                     <li><a href="./index.html">г.Симферополь</a></li>
+                     <li>г.Севастополь</li>
+                     <li>г.Керчь</li>
+                     <li>г.Белогорск</li>
+                  </ul>
+               </div>
+            </div>
+            <div class="col-2">
+               <div id="wb_Accordion1" style="display:inline-block;width:100%;z-index:20;">
+                  <div id="Accordion1" class="panel-group" role="tablist">
+                     <div class="panel panel-default active">
+                        <div class="panel-heading" role="tab">
+                           <h4 class="panel-title"><a class="" role="button" data-toggle="collapse"
+                                 href="#Accordion1-collapse1" aria-controls="Accordion1-collapse1"
+                                 aria-expanded="true"><span class="panel-icon"></span><i
+                                    class="fa fa-window-restore accordion-icon"></i>A02</a></h4>
+                        </div>
+                        <div id="Accordion1-collapse1" class="panel-collapse collapse show" data-parent="#Accordion1"
+                           role="tabpanel">
+                           <div class="panel-body">
+                              <div id="wb_LayoutGrid4">
+                                 <div id="LayoutGrid4">
+                                    <div class="col-1">
+                                       <div id="wb_Image1"
+                                          style="display:inline-block;width:100%;height:auto;z-index:12;">
+                                          <img src="images/logo1_small3.png" id="Image1" alt="" width="93" height="92">
+                                       </div>
+                                    </div>
+                                    <div class="col-2">
+                                       <a id="Button2" href="http://127.0.0.1:8080"
+                                          style="display:block;width: 100%;;height:25px;z-index:13;">PC_A</a>
+                                       <table style="display:table;width:100%;height:93px;z-index:14;" id="Table1">
+                                          <tr>
+                                             <td class="cell0">
+                                                <p>&nbsp;Тип&nbsp;ОС:</p>
+                                             </td>
+                                             <td class="cell0">
+                                                <p>Ubuntu 22.04.4 LTS x86_64</p>
+                                             </td>
+                                          </tr>
+                                          <tr>
+                                             <td class="cell0">
+                                                <p>&nbsp;Аптайм:</p>
+                                             </td>
+                                             <td class="cell0">
+                                                <p>2 hours, 10 mins</p>
+                                             </td>
+                                          </tr>
+                                          <tr>
+                                             <td class="cell0">
+                                                <p> CPU:</p>
+                                             </td>
+                                             <td class="cell0">
+                                                <p>Intel Pentium Gold G6400 (4) @ 4.000GHz</p>
+                                             </td>
+                                          </tr>
+                                          <tr>
+                                             <td class="cell0">
+                                                <p>GPU:</p>
+                                             </td>
+                                             <td class="cell0">
+                                                <p>Intel Device 9ba8</p>
+                                             </td>
+                                          </tr>
+                                          <tr>
+                                             <td class="cell0">
+                                                <p>Память:</p>
+                                             </td>
+                                             <td class="cell0">
+                                                <p> 2457MiB / 7779MiB</p>
+                                             </td>
+                                          </tr>
+                                          <tr>
+                                             <td class="cell0">
+                                                <p>Константы:</p>
+                                             </td>
+                                             <td class="cell0">
+                                                <p>qwerty</p>
+                                             </td>
+                                          </tr>
+                                          <tr>
+                                             <td class="cell0">
+                                                <p>Пароль на кассу:</p>
+                                             </td>
+                                             <td class="cell0">
+                                                <p>123456</p>
+                                             </td>
+                                          </tr>
+                                       </table>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div id="wb_LayoutGrid5">
+                                 <div id="LayoutGrid5">
+                                    <div class="col-1">
+                                       <div id="wb_Image3"
+                                          style="display:inline-block;width:100%;height:auto;z-index:15;">
+                                          <img src="images/logo1_small3.png" id="Image3" alt="" width="93" height="92">
+                                       </div>
+                                    </div>
+                                    <div class="col-2">
+                                       <a id="Button1" href="http://127.0.0.1:8080"
+                                          style="display:block;width: 100%;;height:25px;z-index:16;">Касса_1</a>
+                                       <table style="display:table;width:100%;height:93px;z-index:17;" id="Table2">
+                                          <tr>
+                                             <td class="cell0">
+                                                <p>&nbsp;Тип&nbsp;ОС:</p>
+                                             </td>
+                                             <td class="cell0">
+                                                <p>Ubuntu 22.04.4 LTS x86_64</p>
+                                             </td>
+                                          </tr>
+                                          <tr>
+                                             <td class="cell0">
+                                                <p>&nbsp;Аптайм:</p>
+                                             </td>
+                                             <td class="cell0">
+                                                <p>2 hours, 10 mins</p>
+                                             </td>
+                                          </tr>
+                                          <tr>
+                                             <td class="cell0">
+                                                <p> CPU:</p>
+                                             </td>
+                                             <td class="cell0">
+                                                <p>Intel Pentium Gold G6400 (4) @ 4.000GHz</p>
+                                             </td>
+                                          </tr>
+                                          <tr>
+                                             <td class="cell0">
+                                                <p>GPU:</p>
+                                             </td>
+                                             <td class="cell0">
+                                                <p>Intel Device 9ba8</p>
+                                             </td>
+                                          </tr>
+                                          <tr>
+                                             <td class="cell0">
+                                                <p>Память:</p>
+                                             </td>
+                                             <td class="cell0">
+                                                <p> 2457MiB / 7779MiB</p>
+                                             </td>
+                                          </tr>
+                                          <tr>
+                                             <td class="cell0">
+                                                <p>Константы:</p>
+                                             </td>
+                                             <td class="cell0">
+                                                <p>qwerty</p>
+                                             </td>
+                                          </tr>
+                                          <tr>
+                                             <td class="cell0">
+                                                <p>Пароль на кассу:</p>
+                                             </td>
+                                             <td class="cell0">
+                                                <p>123456</p>
+                                             </td>
+                                          </tr>
+                                       </table>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</body>
+
+</html>

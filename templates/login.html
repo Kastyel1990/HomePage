@@ -1,0 +1,129 @@
+<!-- templates/login.html -->
+<!doctype html>
+<html>
+<head>
+   <meta charset="utf-8">
+   <title>Вход в систему</title>
+   <link href="{{ url_for('static', filename='IT-Helper.css') }}" rel="stylesheet">
+   <link href="{{ url_for('static', filename='favicon.ico') }}" rel="shortcut icon" type="image/x-icon">
+   <style>
+      body {
+         background: #696969;
+         font-family: Arial, sans-serif;
+         height: 100vh;
+         margin: 0;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+      }
+      .login-container {
+         background: white;
+         padding: 40px;
+         border-radius: 10px;
+         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+         width: 100%;
+         max-width: 400px;
+         text-align: center;
+      }
+      .logo {
+         width: 120px; /* Увеличенный размер логотипа */
+         height: auto;
+         margin: 0 auto 35px; /* Центрирование и увеличенный отступ снизу */
+         display: block;
+      }
+      .login-container h2 {
+         margin-bottom: 25px;
+         color: #333;
+      }
+      /* Единые стили для всех кнопок */
+      .btn {
+         display: block;
+         width: 100%;
+         padding: 13px; /* Унифицированная высота */
+         margin: 10px 0;
+         border: none;
+         border-radius: 6px;
+         font-size: 16px;
+         cursor: pointer;
+         transition: all 0.3s ease;
+         text-decoration: none;
+         text-align: center;
+         box-sizing: border-box;
+      }
+      /* Стиль для основной кнопки входа */
+      .btn-primary {
+         background-color: #696969;
+         color: white;
+      }
+      .btn-primary:hover {
+         background-color: #5a5a5a;
+      }
+      /* Стиль для кнопки регистрации */
+      .btn-secondary {
+         background-color: #696969;
+         color: white;
+      }
+      .btn-secondary:hover {
+         background-color: #5a5a5a;
+      }
+      .input-group {
+         margin-bottom: 20px;
+         text-align: left;
+      }
+      .input-group label {
+         display: block;
+         margin-bottom: 5px;
+         color: #555;
+      }
+      .input-group input {
+         width: 100%;
+         padding: 10px;
+         border: 1px solid #ccc;
+         border-radius: 5px;
+         box-sizing: border-box;
+      }
+      .flashes {
+         margin-bottom: 20px;
+         color: red;
+         text-align: center;
+      }
+      .flashes li {
+         list-style: none;
+      }
+   </style>
+</head>
+<body>
+<div class="login-container">
+    <!-- Логотип -->
+    <img src="{{ url_for('static', filename='images/logo1_small3.png') }}" alt="Logo" class="logo">
+    
+    <h2>Вход в IT Helper</h2>
+    
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flashes">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    
+    <form method="post" action="{{ url_for('login') }}">
+        <div class="input-group">
+            <label for="username">Имя пользователя:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="input-group">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Войти</button>
+    </form>
+    
+    {% if ALLOW_REGISTRATION %}
+    <a href="{{ url_for('register') }}" class="btn btn-secondary">Зарегистрироваться</a>
+    {% endif %}
+</div>
+</body>
+</html>
