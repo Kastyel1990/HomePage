@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (this.value === '') {
                 editbox1.blur();
             } else {
-                fetchShops(this.value);
+                fetchShopsAndUpdateAccordion(this.value);
                 editbox1.value = '';
                 editbox1.blur();
             }
@@ -39,15 +39,15 @@ function scrollToTop() {
     });
 }
 
-async function fetchShops(searchText) {
+async function fetchShopsAndUpdateAccordion(searchText) {
     if (searchText.trim() !== '') {
         try {
-            const response = await fetch(`/search_shops/${searchText}`);
-            const shops = await response.json();
+            const shopsResponse = await fetch('/search_shops/' + searchText);
+            const shops = await shopsResponse.json();
             createAccordions(shops);
             scrollToTop();
         } catch (error) {
-            console.error('Error fetching shops:', error);
+            console.error('Error in fetchShopsAndUpdateAccordion:', error);
         }
     }
 }
@@ -56,7 +56,8 @@ function createAccordions(shopsArray) {
     var accordionContainer = $('#Accordion1');
     accordionContainer.empty();
 
-    shopsArray.forEach(async function (shopInfo, index) {
+    var index_counter = 0;
+    shopsArray.forEach(function (shopInfo, index) {
         var shop = shopInfo.shop;
         var adres = shopInfo.adres;
         var pcs = shopInfo.pcs;
@@ -67,37 +68,39 @@ function createAccordions(shopsArray) {
         var panelLink = $('<a>').attr({
             'role': 'button',
             'data-toggle': 'collapse',
-            'href': `#Accordion1-collapse${index}`,
-            'aria-controls': `Accordion1-collapse${index}`,
+            'href': '#Accordion1-collapse' + index,
+            'aria-controls': 'Accordion1-collapse' + index,
             'aria-expanded': 'false'
-        }).text(`${shop} | ${adres}`);
+        }).text(shop + ' | ' + adres);
 
         panelLink.prepend($('<span>').addClass('panel-icon'));
         panelLink.prepend($('<i>').addClass('fa fa-window-restore accordion-icon'));
 
         panelTitle.append(panelLink);
         panelHeading.append(panelTitle);
+        
         panel.append(panelHeading);
 
         var panelCollapse = $('<div>').attr({
-            'id': `Accordion1-collapse${index}`,
+            'id': 'Accordion1-collapse' + index,
             'class': 'panel-collapse collapse',
             'data-parent': '#Accordion1',
             'role': 'tabpanel'
         });
         var panelBody = $('<div>').addClass('panel-body');
 
-        pcs.forEach(async (pcInfo, index_counter) => {
+        pcs.forEach((pcInfo) => {
             var labelColor = pcInfo.status ? '#00bc00' : '#ff0000';
-            var wb_LayoutGrid = $('<div>').attr({ 'id': `wb_LayoutGrid${index_counter}` });
-            var layoutGrid = $('<div>').attr({ 'id': `LayoutGrid${index_counter}` });
+            var indexItem = 4;
+            var wb_LayoutGrid = $('<div>').attr({ 'id': 'wb_LayoutGrid' + indexItem });
+            var layoutGrid = $('<div>').attr({ 'id': 'LayoutGrid' + indexItem });
             var col1 = $('<div>').addClass('col-1');
-            var wb_Image = $('<div>').attr({ 'id': `wb_PicOS${index_counter}` });
+            var wb_Image = $('<div>').attr({ 'id': 'wb_PicOS' + index_counter });
 
             var image = $('<img>').attr({
                 'indexCounter': index_counter,
                 'src': pcInfo.pic_os,
-                'id': `PicOS${index_counter}`,
+                'id': 'PicOS' + index_counter,
                 'width': '93',
                 'height': '92'
             });
@@ -119,20 +122,262 @@ function createAccordions(shopsArray) {
                 'gap': '10px'
             });
 
-            createButtons(pcInfo, buttonsContainer, index_counter);
-            col2.append(buttonsContainer);
+            if (pcInfo.rdp_link === '') {
+                var buttonMsg = $('<a>').addClass('buttonPCMsg');
+                buttonMsg.attr({
+                    'title': 'Отправка сообщения',
+                    'indexCounter': index_counter,
+                    'id': 'ButtonPCMsg' + index_counter,
+                    'data-label': pcInfo.ip,
+                    'href': 'javascript:void(0);',
+                    'style': 'display:block;width: 10%;height:25px;z-index:6;position:relative;text-decoration:none;'
+                }).prepend($('<i>').addClass('fa fa-commenting-o accordion-icon').attr('style', 'position:relative;'));
 
-            var table = createTable(pcInfo, index_counter, shop);
+                if (!pcInfo.status) {
+                    buttonMsg.addClass('button-disabled');
+                }
+
+                buttonsContainer.append(buttonMsg);
+
+                buttonMsg.on('click', function () {
+                    $("#Dialog1").dialog({
+                        title: 'Отправка сообщения',
+                        modal: true,
+                        width: 412,
+                        height: 139,
+                        position: { my: 'center', at: 'center', of: window },
+                        resizable: true,
+                        draggable: true,
+                        closeOnEscape: true,
+                        show: { effect: 'blind', duration: 400 },
+                        hide: { effect: 'blind', duration: 400 },
+                        autoOpen: true,
+                        classes: { 'ui-dialog': 'Dialog1' }
+                    });
+                    $("#Dialog1").attr({ 'shop': shop, 'pc': pcInfo.pc });
+                });
+            }
+
+            if (pcInfo.rdp_link === '') {
+                var buttonSSH = $('<a>').addClass('buttonPCSSH');
+                buttonSSH.attr({
+                    'title': 'Подключение по SSH',
+                    'indexCounter': index_counter,
+                    'id': 'ButtonPCSSH' + index_counter,
+                    'data-link': pcInfo.ssh_link,
+                    'data-label': pcInfo.ip,
+                    'href': 'javascript:void(0);',
+                    'style': 'display:block;width: 45%;height:25px;z-index:6;position:relative;text-decoration:none;'
+                }).text('SSH_' + pcInfo.pc);
+
+                if (!pcInfo.status) {
+                    buttonSSH.addClass('button-disabled');
+                }
+
+                buttonSSH.on('click', function () {
+                    if (!pcInfo.status) return;
+                    $.ajax({
+                        url: '/get_token',
+                        type: 'GET',
+                        success: function (response) {
+                            var token = response.token;
+                            var url = pcInfo.ssh_link + '?token=' + token;
+                            window.open(url, '_blank');
+                        },
+                        error: function () {
+                            alert('Ошибка получения токена');
+                        }
+                    });
+                });
+
+                buttonsContainer.append(buttonSSH);
+            } else {
+                var buttonRDP = $('<a>').addClass('buttonPCRDP');
+                buttonRDP.attr({
+                    'title': 'Подключение по RDP',
+                    'indexCounter': index_counter,
+                    'id': 'ButtonPCRDP' + index_counter,
+                    'data-link': pcInfo.rdp_link,
+                    'data-label': pcInfo.ip,
+                    'href': 'javascript:void(0);',
+                    'style': 'display:block;width: 50%;height:25px;z-index:6;position:relative;text-decoration:none;'
+                }).text('RDP_' + pcInfo.pc);
+
+                if (!pcInfo.status) {
+                    buttonRDP.addClass('button-disabled');
+                }
+
+                buttonRDP.on('click', function () {
+                    if (!pcInfo.status) return;
+                    $.ajax({
+                        url: '/get_token',
+                        type: 'GET',
+                        success: function (response) {
+                            var token = response.token;
+                            var url = pcInfo.rdp_link + '?token=' + token;
+                            window.open(url, '_blank');
+                        },
+                        error: function () {
+                            alert('Ошибка получения токена');
+                        }
+                    });
+                });
+
+                buttonsContainer.append(buttonRDP);
+            }
+
+            var buttonVNC = $('<a>').addClass('buttonPCVNC');
+            buttonVNC.attr({
+                'title': 'Подключение по VNC',
+                'indexCounter': index_counter,
+                'id': 'ButtonPCVNC' + index_counter,
+                'data-link': pcInfo.vnc_link,
+                'data-label': pcInfo.ip,
+                'href': 'javascript:void(0);'
+            }).text('VNC_' + pcInfo.pc);
+            if (pcInfo.rdp_link === '') {
+                buttonVNC.attr({ 'style': 'display:block;width: 50%;height:25px;z-index:6;position:relative;text-decoration:none;' });
+            } else {
+                buttonVNC.attr({ 'style': 'display:block;width: 45%;height:25px;z-index:6;position:relative;text-decoration:none;' });
+            }
+
+            buttonVNC.css('--label-background-color', labelColor);
+            if (!pcInfo.status) {
+                buttonVNC.addClass('button-disabled');
+            }
+
+            buttonVNC.on('click', function () {
+                if (!pcInfo.status) return;
+                $.ajax({
+                    url: '/get_token',
+                    type: 'GET',
+                    success: function (response) {
+                        var token = response.token;
+                        var url = pcInfo.vnc_link + '?token=' + token;
+                        window.open(url, '_blank');
+                    },
+                    error: function () {
+                        alert('Ошибка получения токена');
+                    }
+                });
+            });
+
+            buttonsContainer.append(buttonVNC);
+
+            tableData = [
+                { label: "Тип ОС:", value: pcInfo.type_os },
+                { label: "Аптайм:", value: pcInfo.uptime },
+                { label: "CPU:", value: pcInfo.cpu_model },
+                { label: "GPU:", value: pcInfo.gpu_model.replace(/\n/g, "<br>") },
+                { label: "Память:", value: pcInfo.ram },
+                { label: "Константы:", value: pcInfo.constants },
+                { label: "Пароль на кассу:", value: pcInfo.cash_pass },
+            ];
+
+            tableStyles = {
+                border: "1px solid #C0C0C0",
+                borderRadius: "0px",
+                backgroundColor: "transparent",
+                backgroundImage: "none",
+                borderCollapse: "collapse",
+                borderSpacing: "1px",
+                margin: "0",
+                width: "100%",
+                height: "93px",
+                display: "table",
+                zIndex: "14"
+            };
+
+            cellStyles = {
+                background: "transparent",
+                border: "1px #C0C0C0 solid",
+                textAlign: "left",
+                verticalAlign: "top",
+                color: "#000000",
+                fontFamily: "Arial",
+                fontSize: "13px",
+                lineHeight: "16px"
+            };
+
+            pStyles = {
+                margin: "0",
+                padding: "0",
+                whiteSpace: "nowrap"
+            };
+
+            table = document.createElement("table");
+            table.className = "table_params";
+            table.id = "Table" + index_counter;
+            applyStyles(table, tableStyles);
+
+            table.setAttribute('shop', shop);
+            table.setAttribute('pc', pcInfo.pc);
+            table.setAttribute('ip', pcInfo.ip);
+            table.setAttribute('indexCounter', index_counter);
+
+            tableData.forEach((item, index) => {
+                row = table.insertRow();
+                cell1 = row.insertCell(0);
+                cell2 = row.insertCell(1);
+                cell1.className = "cell0";
+                cell2.className = "cell0";
+                cell1.innerHTML = `<p>${item.label}</p>`;
+                cell2.innerHTML = `<p>${item.value}</p>`;
+                cell2.setAttribute('data-index', index);
+
+                applyStyles(cell1, cellStyles);
+                applyStyles(cell2, cellStyles);
+
+                pElements = row.querySelectorAll('p');
+                pElements.forEach(p => {
+                    applyStyles(p, pStyles);
+                });
+            });
+
+            col2.append(buttonsContainer);
             col2.append(table);
             layoutGrid.append(col2);
             wb_LayoutGrid.append(layoutGrid);
             panelBody.append(wb_LayoutGrid);
 
-            checkIpAndFetchParams(pcInfo, index_counter, shop);
+            // Кнопка обновления магазина
+            var updateShopBtn = $('<button>')
+            .addClass('update-shop-btn')
+            .attr('data-shop', shop)
+            .text('Обновить магазин');
+
+            // Вешаем обработчик (см. дальнейший шаг)
+            updateShopBtn.on('click', function () {
+            var $btn = $(this);
+            $btn.prop('disabled', true).text('Обновление...');
+            fetch(`/update_shop/${shop}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    $btn.text(data.status === 'ok' ? 'Обновлено!' : 'Ошибка!');
+                    setTimeout(() => {
+                        $btn.text('Обновить магазин').prop('disabled', false);
+                        // Перезапрашиваем данные магазина и обновляем аккордеон
+                        fetchShopsAndUpdateAccordion(shop);
+                        setTimeout(() => set_os_params(), 600); // Чтобы сразу обновить параметры ПК
+                    }, 1500);
+                }).catch(() => {
+                    $btn.text('Ошибка!');
+                    setTimeout(() => {
+                        $btn.text('Обновить магазин').prop('disabled', false);
+                    }, 1500);
+                });
+            });
+            // Добавляем кнопку в panelBody или panelHeading (по твоему вкусу)
+            panelBody.prepend(updateShopBtn);
+
+            index_counter += 1;
         });
+
+        
 
         panelCollapse.append(panelBody);
         panel.append(panelCollapse);
+
         accordionContainer.append(panel);
     });
 
@@ -142,139 +387,4 @@ function createAccordions(shopsArray) {
     $("#Accordion1 .panel").on('hide.bs.collapse', function () {
         $(this).removeClass('active');
     });
-}
-
-function createButtons(pcInfo, buttonsContainer, index_counter) {
-    if (pcInfo.rdp_link === '') {
-        var buttonMsg = $('<a>').addClass('buttonPCMsg').attr({
-            'title': 'Отправка сообщения',
-            'indexCounter': index_counter,
-            'id': `ButtonPCMsg${index_counter}`,
-            'data-label': pcInfo.ip,
-            'href': 'javascript:void(0);',
-            'style': 'display:block;width: 10%;height:25px;z-index:6;position:relative;text-decoration:none;'
-        }).prepend($('<i>').addClass('fa fa-commenting-o accordion-icon').attr('style', 'position:relative;'));
-
-        if (!pcInfo.status) buttonMsg.addClass('button-disabled');
-
-        buttonsContainer.append(buttonMsg);
-
-        buttonMsg.on('click', function () {
-            $("#Dialog1").dialog({
-                title: 'Отправка сообщения',
-                modal: true,
-                width: 412,
-                height: 139,
-                position: { my: 'center', at: 'center', of: window },
-                resizable: true,
-                draggable: true,
-                closeOnEscape: true,
-                show: { effect: 'blind', duration: 400 },
-                hide: { effect: 'blind', duration: 400 },
-                autoOpen: true,
-                classes: { 'ui-dialog': 'Dialog1' }
-            });
-            $("#Dialog1").attr({ 'shop': shop, 'pc': pcInfo.pc });
-        });
-    }
-
-    if (pcInfo.rdp_link === '') {
-        var buttonSSH = $('<a>').addClass('buttonPCSSH').attr({
-            'title': 'Подключение по SSH',
-            'indexCounter': index_counter,
-            'id': `ButtonPCSSH${index_counter}`,
-            'href': pcInfo.ssh_link,
-            'data-label': pcInfo.ip,
-            'target': '_blank',
-            'style': 'display:block;width: 45%;height:25px;z-index:6;position:relative;text-decoration:none;'
-        }).text(`SSH_${pcInfo.pc}`);
-
-        if (!pcInfo.status) buttonSSH.addClass('button-disabled');
-
-        buttonsContainer.append(buttonSSH);
-    } else {
-        var buttonRDP = $('<a>').addClass('buttonPCRDP').attr({
-            'title': 'Подключение по RDP',
-            'indexCounter': index_counter,
-            'id': `ButtonPCRDP${index_counter}`,
-            'href': pcInfo.rdp_link,
-            'data-label': pcInfo.ip,
-            'target': '_blank',
-            'style': 'display:block;width: 50%;height:25px;z-index:6;position:relative;text-decoration:none;'
-        }).text(`RDP_${pcInfo.pc}`);
-
-        if (!pcInfo.status) buttonRDP.addClass('button-disabled');
-
-        buttonsContainer.append(buttonRDP);
-    }
-
-    var buttonVNC = $('<a>').addClass('buttonPCVNC').attr({
-        'title': 'Подключение по VNC',
-        'indexCounter': index_counter,
-        'id': `ButtonPCVNC${index_counter}`,
-        'href': pcInfo.vnc_link,
-        'data-label': pcInfo.ip,
-        'target': '_blank',
-        'style': pcInfo.rdp_link === '' ? 'display:block;width: 50%;height:25px;z-index:6;position:relative;text-decoration:none;' : 'display:block;width: 45%;height:25px;z-index:6;position:relative;text-decoration:none;'
-    }).text(`VNC_${pcInfo.pc}`);
-
-    buttonVNC.css('--label-background-color', pcInfo.status ? '#00bc00' : '#ff0000');
-    if (!pcInfo.status) buttonVNC.addClass('button-disabled');
-
-    buttonsContainer.append(buttonVNC);
-}
-
-function createTable(pcInfo, index_counter, shop) {
-    const tableData = [
-        { label: "Тип ОС:", value: pcInfo.type_os },
-        { label: "Аптайм:", value: pcInfo.uptime },
-        { label: "CPU:", value: pcInfo.cpu_model },
-        { label: "Загрузка ЦП:", value: pcInfo.cpu_load },
-        { label: "RAM:", value: pcInfo.total_ram },
-        { label: "Диск:", value: pcInfo.hdd_capacity },
-        { label: "Тип устройства:", value: pcInfo.type_pc }
-    ];
-
-    var table = $('<table>').addClass('TablePC');
-    table.attr('indexCounter', index_counter);
-
-    tableData.forEach(function (row) {
-        var tr = $('<tr>');
-        var tdLabel = $('<td>').addClass('labelTD').css('text-align', 'right').text(row.label);
-        var tdValue = $('<td>').addClass('infoTD').attr('id', `${row.label}${index_counter}`).text(row.value);
-        tr.append(tdLabel);
-        tr.append(tdValue);
-        table.append(tr);
-    });
-
-    return table;
-}
-
-async function checkIpAndFetchParams(pcInfo, index_counter, shop) {
-    const ip = pcInfo.ip;
-    try {
-        const availabilityResponse = await fetch(`/check_ip/${ip}`);
-        const availability = await availabilityResponse.json();
-
-        if (availability) {
-            const paramsResponse = await fetch(`/get_params/${shop}/${pcInfo.pc}`);
-            const params = await paramsResponse.json();
-
-            updateTable(params, index_counter);
-        }
-    } catch (error) {
-        console.error('Error checking IP or fetching params:', error);
-    }
-}
-
-function updateTable(params, index_counter) {
-    const { type_os, uptime, cpu_model, cpu_load, total_ram, hdd_capacity, type_pc } = params;
-
-    $(`#typeOS${index_counter}`).text(type_os);
-    $(`#uptime${index_counter}`).text(uptime);
-    $(`#cpuModel${index_counter}`).text(cpu_model);
-    $(`#cpuLoad${index_counter}`).text(cpu_load);
-    $(`#totalRAM${index_counter}`).text(total_ram);
-    $(`#hddCapacity${index_counter}`).text(hdd_capacity);
-    $(`#typePC${index_counter}`).text(type_pc);
 }

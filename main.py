@@ -911,7 +911,19 @@ def register():
     
     return render_template('register.html')
 
-
+# Маршрут для обновления информации по конкретному магазину
+@app.route('/update_shop/<shop_name>', methods=['POST'])
+def update_shop(shop_name):
+    """
+    Маршрут для обновления данных только по одному магазину.
+    shop_name — идентификатор магазина (имя или номер).
+    """
+    
+    # Запускаем скрипт с параметром
+    result = subprocess.run(['python', 'collect_shops_params_async.py', shop_name])
+    
+    # Можно добавить обработку ошибок/вывода
+    return jsonify({'status': 'ok' if result.returncode == 0 else 'error'})
 
 if __name__ == '__main__':
     app.run(port=9000,host='127.0.0.1',)

@@ -1,3 +1,4 @@
+import sys
 import mysql.connector
 import paramiko
 from ping3 import ping
@@ -126,18 +127,24 @@ def process_host(row, client):
     finally:
         client.close()
 
-def get_params_pc():
+def get_params_pc(shop_name = None):
     start_time = time.time()
     update_data = []
     
     with db_connection('mysql') as conn:
         cursor = conn.cursor(buffered=True)
-        cursor.execute("""
+        sql = """
             SELECT sp.shop_name, sp.pc, gssp.ip, gssp.user, gssp.pass 
             FROM shops_params sp
             JOIN get_shops_ssh_params gssp 
             ON sp.shop_name = gssp.shop AND sp.pc = gssp.pc
-        """)
+        """
+        if shop_name:
+            sql += "\nWHERE sp.shop_name = %s\n"
+            cursor.execute(sql, (shop_name,))
+        else:
+            cursor.execute(sql)
+
         rows = cursor.fetchall()
 
     with ThreadPoolExecutor(max_workers=10) as executor:
@@ -195,4 +202,5 @@ def get_params_pc():
 
 
 if __name__ == '__main__':
-    get_params_pc()
+    shop_name = sys.argv[1] if len(sys.argv) > 1 else None
+    get_params_pc(shop_name)
