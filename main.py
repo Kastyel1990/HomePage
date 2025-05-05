@@ -920,7 +920,7 @@ def update_shop(shop_name):
     """
     
     # Запускаем скрипт с параметром
-    result = subprocess.run(['python', 'collect_shops_params_async.py', shop_name])
+    result = subprocess.run(['python', str(Path(__file__).parent / 'collect_shops_params_async.py'), shop_name])
     
     # Можно добавить обработку ошибок/вывода
     return jsonify({'status': 'ok' if result.returncode == 0 else 'error'})
