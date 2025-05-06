@@ -918,12 +918,16 @@ def update_shop(shop_name):
     Маршрут для обновления данных только по одному магазину.
     shop_name — идентификатор магазина (имя или номер).
     """
+    try:
+        # Запускаем скрипт с параметром
+        result = subprocess.run(['/home/ch/Script/Python/HomePage/.venv/bin/python3', str(Path(__file__).parent / 'collect_shops_params_async.py'), shop_name])
     
-    # Запускаем скрипт с параметром
-    result = subprocess.run(['python', str(Path(__file__).parent / 'collect_shops_params_async.py'), shop_name])
-    
-    # Можно добавить обработку ошибок/вывода
-    return jsonify({'status': 'ok' if result.returncode == 0 else 'error'})
+        # Можно добавить обработку ошибок/вывода
+        return jsonify({'status': 'ok' if result.returncode == 0 else 'error'})
+    except Exception as e:
+        # Логируем ошибку и возвращаем статус 500
+        print(f"Ошибка при обновлении магазина: {e}")
+        return jsonify({'status': 'error', 'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(port=9000,host='127.0.0.1',)
