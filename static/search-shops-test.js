@@ -435,4 +435,41 @@ function createAccordions(shopsArray) {
     $("#Accordion1 .panel").on('hide.bs.collapse', function () {
         $(this).removeClass('active');
     });
+
+    
 }
+
+function checkVisiblePcStatusPeriodically() {
+    // Находим все открытые (развёрнутые) панели аккордеона
+    $('#Accordion1 .panel-collapse.show, #Accordion1 .panel-collapse.in').each(function() {
+        // Внутри каждой открытой панели ищем все кнопки VNC
+        $(this).find('.buttonPCVNC').each(function() {
+            var $vncBtn = $(this);
+            var ip = $vncBtn.attr('data-label');
+            var indexCounter = $vncBtn.attr('indexCounter');
+            if (!ip) return;
+
+            fetch('/check_ip/' + ip)
+                .then(response => response.json())
+                .then(data => {
+                    var isOnline = !!data.status;
+
+                    // Обновляем цвет прямоугольника через custom property
+                    $vncBtn.css('--label-background-color', isOnline ? '#00bc00' : '#ff0000');
+
+                    // Отключаем/включаем все кнопки этого ПК (ищем по indexCounter)
+                    var $allBtns = $vncBtn.closest('.col-2').find('a[indexCounter="' + indexCounter + '"]');
+                    if (isOnline) {
+                        $allBtns.removeClass('button-disabled');
+                    } else {
+                        $allBtns.addClass('button-disabled');
+                    }
+                })
+                .catch(console.error);
+        });
+    });
+}
+
+// Запускаем проверку каждые 5 секунд
+setInterval(checkVisiblePcStatusPeriodically, 5000);
+
