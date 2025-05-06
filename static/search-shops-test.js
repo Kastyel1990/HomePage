@@ -321,6 +321,22 @@ function buildAccordionPanel(shopInfo, index) {
                 lineHeight: "16px"
             };
 
+            var cell0Styles = {
+                // ваши старые стили
+                background: "transparent",
+                border: "1px #C0C0C0 solid",
+                textAlign: "left",
+                verticalAlign: "top",
+                color: "#000000",
+                fontFamily: "Arial",
+                fontSize: "13px",
+                lineHeight: "16px",
+                // новые стили:
+                whiteSpace: "nowrap",
+                minWidth: "90px", // подберите своё значение
+                width: "1%"
+            };
+
             pStyles = {
                 margin: "0",
                 padding: "0",
@@ -347,13 +363,13 @@ function buildAccordionPanel(shopInfo, index) {
                 cell2.innerHTML = `<p>${item.value}</p>`;
                 cell2.setAttribute('data-index', index);
 
-                applyStyles(cell1, cellStyles);
-                applyStyles(cell2, cellStyles);
+                //applyStyles(cell1, cell0Styles);
+                //applyStyles(cell2, cellStyles);
 
-                pElements = row.querySelectorAll('p');
-                pElements.forEach(p => {
-                    applyStyles(p, pStyles);
-                });
+                //pElements = row.querySelectorAll('p');
+                //pElements.forEach(p => {
+                //    applyStyles(p, pStyles);
+                //});
             });
 
             col2.append(buttonsContainer);
