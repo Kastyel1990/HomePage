@@ -147,8 +147,19 @@ def get_shops_array_with_step_OLD(start_index, step):
     return filtered_shops_array
 
 # Функция для проверки доступности IP-адреса
-def check_ip_availability(ip):
-    return ping(ip, timeout=3) is not None
+def check_ip_availability(ip, timeout=2, count=1):
+    #return ping(ip, timeout=3) is not None
+    try:
+        # Параметры ping: -c количество пакетов, -W таймаут (сек)
+        result = subprocess.run(
+            ['ping', '-c', str(count), '-W', str(timeout), ip],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        return result.returncode == 0
+    except Exception as e:
+        print(f"Ошибка ping: {e}")
+        return False
 
 # Функция преобразования и перевод строки аптайма
 # Не используется
