@@ -148,7 +148,7 @@ def get_shops_array_with_step_OLD(start_index, step):
 
 # Функция для проверки доступности IP-адреса
 def check_ip_availability(ip):
-    return ping(ip, timeout=1) is not None
+    return ping(ip, timeout=3) is not None
 
 # Функция преобразования и перевод строки аптайма
 # Не используется
