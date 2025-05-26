@@ -214,6 +214,25 @@ def get_kassa_password_OLD(shop):
     #cursor.close()
     return row[3]
 
+# Получение GUID-a магазина. Нужно для скрипта настройки кассы
+# В сайте не используется
+def get_shop_guid(shop):
+    conn_str = (
+    "DRIVER={ODBC Driver 18 for SQL Server};"
+    "SERVER=192.168.2.59;"
+    "DATABASE=OTData;"
+    "UID=cash-place;"
+    "PWD=ljcneg5116602014xbcnsqljv;"
+    "Encrypt=no;TrustServerCertificate=yes;"
+    )
+    conn = pyodbc.connect(conn_str)
+    cursor = conn.cursor()
+    cursor.execute(f"select guid from cash_exchange.dbo.shops WHERE code = ?", shop)
+    row = cursor.fetchone()
+    conn.close()
+    #cursor.close()
+    return row[0] if row else None
+
 # Функция для получения параметров подключения SSH для магазина и кассы
 # Используется для отправки сообщений
 def get_ssh_auth_params(shop, pc):
@@ -757,8 +776,8 @@ def select_mssql_script():
             "DRIVER={ODBC Driver 18 for SQL Server};"
             "SERVER=192.168.2.59;"
             "DATABASE=cash_exchange;"
-            "UID=sa;"
-            "PWD=Sql0412755;"
+            "UID=cash-place;"
+            "PWD=ljcneg5116602014xbcnsqljv;"
             "Encrypt=no;TrustServerCertificate=yes;"
         )
         conn = pyodbc.connect(conn_str)
@@ -939,6 +958,13 @@ def update_shop(shop_name):
         # Логируем ошибку и возвращаем статус 500
         print(f"Ошибка при обновлении магазина: {e}")
         return jsonify({'status': 'error', 'error': str(e)}), 500
+    
+@app.route('/get_shop_guid/<shop>', methods=['GET'])
+def get_guid_of_shop(shop):
+    try:
+        return jsonify({'guid':get_shop_guid(shop)})
+    except:
+        return jsonify({'guid':'none'})
 
 if __name__ == '__main__':
     app.run(port=9000,host='127.0.0.1',)
